@@ -57,6 +57,38 @@ class Model:
             v=self._idMapFermate[conn.id_stazA]
             self._grafo.add_edge(u, v)
 
+    #4) aggiungiamo i metodi per le visite del grafo
+    def getBFSNodesFrom(self, source): #source rappresenta il nodo di partenza
+        archi=nx.bfs_edges(self._grafo,source) #passiamo il grafo e il source --> resituisce liste di tuple
+        nodiBFS= []
+        for u,v in archi:
+            #ci chiedono tutti i nodi che possiamo esplorare da nodo source a nodo target
+            nodiBFS.append(v) #perchè quelli in partnza già li prndiamo
+        return nodiBFS
+
+    def getDFSNodesFrom(self, source):
+        archi = nx.dfs_edges(self._grafo, source)  # passiamo il grafo e il source --> resituisce liste di tuple
+        nodiDFS = []
+        for u, v in archi:
+            # ci chiedono tutti i nodi che possiamo esplorare da nodo source a nodo target
+            nodiDFS.append(v)  # perchè quelli in partnza già li prndiamo
+        return nodiDFS
+
+    #metodo con tree --> uguali risultati --> il primo da un archi il seconod direttamente il grafo
+    def getBFSNodesFromTree(self, source): #source rappresenta il nodo di partenza
+        tree=nx.bfs_tree(self._grafo,source) #passiamo il grafo e il source --> resituisce liste di tuple
+        archi = list(tree.edges)
+        nodiBFS = list(tree.nodes) #contiene anche il source
+        return nodiBFS
+
+
+    def getDFSNodesFromTree(self, source): #source rappresenta il nodo di partenza
+        tree=nx.dfs_tree(self._grafo,source) #passiamo il grafo e il source --> resituisce liste di tuple
+        archi = list(tree.edges)
+        nodiDFS = list(tree.nodes) #contiene anche il source
+        return nodiDFS
+
+
     @property
     def fermate(self):
         return self._fermate
