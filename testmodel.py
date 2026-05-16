@@ -10,5 +10,11 @@ print("numero archi", model.get_numArchi())
 
 source= Fermata(2,	"Abbesses",	2.33855	,48.8843) #copiato da database
 
-nodiBFS= model.getBFSNodesFrom(source)
-nodiDFS= model.getPDSNodesFrom(source)
+nodiBFS= model.getBFSNodesFromEdges(source)
+nodiDFS= model.getDFSNodesFromEdges(source)
+
+#stampiamo archi con peso 2
+print ("Archi con peso 2")
+archi= model.getArchiWPeso2()
+for a in archi:
+    print(a[0],a[1], a["weight"])

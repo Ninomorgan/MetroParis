@@ -66,11 +66,33 @@ class DAO():
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT * FROM connessione c "
+        query = """select * from connessione c """ #prende tutti i campi della connessione
         cursor.execute(query)
 
         for row in cursor:
             result.append(Connessione(**row))
+
         cursor.close()
         conn.close()
         return result
+
+    @staticmethod
+    def getAllEdgesPesati():  # prende tutte le fermate
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select id_stazP, id_stazA, count(*) as peso
+                    from connessione c
+                    group by id_stazP, c.id_stazA
+                    order by peso desc"""
+        cursor.execute(query)
+
+        for row in cursor:
+            result.append((row["id_stanzP"], row["id_stazA"], row["peso"]))
+
+        cursor.close()
+        conn.close()
+        return result
+

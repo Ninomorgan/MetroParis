@@ -25,6 +25,42 @@ class Model:
         #3) agigugniamo i nodi e creiamo una funzione
         self.addEdges3()
 
+    def buildGraphPesato(self):
+        self._grafo.clear()
+        self._grafo.add_nodes_from(self._fermate)
+        self.addEdgesPesati()
+
+    def addEdgesPesati(self):
+        #riutilizziamo il funzionamento di addedeges contanto quante volte aggiungiamo acrhi
+        #con qusto abbiamo una query sql molto più semplice ma più lenta
+
+        self._grafo.clear_edges()
+
+        alledges = DAO.getAllEdges() #aggingiamo al dao
+        for conn in alledges:
+            u = self._idMapFermate[conn.id_stazP]
+            v = self._idMapFermate[conn.id_stazA]
+            if self._grafo.has_edge(u, v):
+                self._grafo[u][v]['weight'] += 1 #il peso di ogni arco aumenta se viene ripetuto
+
+            else:
+                self._grafo.add_edge(u, v,weight = 1 )
+
+    def addEdgesPesati2(self): #METODO SEMPLIFICATO
+        #caclolo del peso alla query sql più complessa da scrivere ma più veoce
+
+        self._grafo.clear_edges()
+        allEdgesWPeso=DAO.getAllEdgesPesati()
+        #restituissce una lista di tuple
+        #(id_staP, stazA, peso)
+        for e in allEdgesWPeso:
+            u = self._idMapFermate[e.id_stazP]
+            v = self._idMapFermate[e.id_stazA]
+            peso= e.peso
+
+            self._grafo.add_edge(u, v, weight = peso)
+
+
     #metodi che mi permettono di aspere quanti noid e archi ho
     def get_numNodi(self):
         return len(self._grafo.nodes)
@@ -58,7 +94,7 @@ class Model:
             self._grafo.add_edge(u, v)
 
     #4) aggiungiamo i metodi per le visite del grafo
-    def getBFSNodesFrom(self, source): #source rappresenta il nodo di partenza
+    def getBFSNodesFromEdges(self, source): #source rappresenta il nodo di partenza
         archi=nx.bfs_edges(self._grafo,source) #passiamo il grafo e il source --> resituisce liste di tuple
         nodiBFS= []
         for u,v in archi:
@@ -66,7 +102,7 @@ class Model:
             nodiBFS.append(v) #perchè quelli in partnza già li prndiamo
         return nodiBFS
 
-    def getDFSNodesFrom(self, source):
+    def getDFSNodesFromEdges(self, source):
         archi = nx.dfs_edges(self._grafo, source)  # passiamo il grafo e il source --> resituisce liste di tuple
         nodiDFS = []
         for u, v in archi:
@@ -87,6 +123,13 @@ class Model:
         archi = list(tree.edges)
         nodiDFS = list(tree.nodes) #contiene anche il source
         return nodiDFS
+
+    def getArchiWPeso2(self):
+        edges = self._grafo.edges(data=True)  #in edges verranno salvati le connessione con tutti gli attributi
+        result = []
+        for e in edges:
+            if self.grafo.get_edge_data((e[0],e[1]) ["weight"]) >1: #prendiamo gli archi i
+                result.append(e)
 
 
     @property

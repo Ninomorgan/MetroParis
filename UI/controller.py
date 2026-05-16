@@ -38,11 +38,10 @@ class Controller:
 
         nodes = self._model.getBFSNodesFrom(self._fermataPartenza)
         self._view.lst_result.controls.clear()
-        self._view.lst_result.controls.append(ft.Text(f"DI seufito le stazioni raggiungibili da {self._fermataPartenza}"))
+        self._view.lst_result.controls.append(ft.Text(f"DI seugito le stazioni raggiungibili da {self._fermataPartenza}"))
         for n in nodes:
             self._view.lst_result.controls.append(ft.Text(n))
         self._view.update_page()
-
 
 
 
